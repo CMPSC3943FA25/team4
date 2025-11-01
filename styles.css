@@ -114,7 +114,7 @@ h1 {
   z-index: 1000;
 }
 
-/* Offset small states manually */
+/* Offset small states manually (some still not right*/
 #state-labels text[data-state="RI"],
 #state-labels text[data-state="DE"],
 #state-labels text[data-state="CT"],
