@@ -92,7 +92,7 @@ function addStateLabels() {
   }
 }
 
-// === Accessibility + keyboard support ===
+// === Accessibility ===
 function enhanceAccessibility() {
   document.querySelectorAll('.state').forEach(el => {
     el.setAttribute('tabindex', '0');
@@ -107,7 +107,7 @@ function enhanceAccessibility() {
   });
 }
 
-// === Toggle helpers ===
+// === Extra Helpers ===
 function toggleState(el) {
   const nowVisited = !el.classList.contains('visited');
   el.classList.toggle('visited', nowVisited);
@@ -127,7 +127,7 @@ function initDelegatedClickHandler() {
   });
 }
 
-// === Restore visited states from localStorage and initialize base fills ===
+// === Restore saves ===
 function restoreVisited() {
   const set = getVisitedFromStorage();
   const states = document.querySelectorAll('.state');
