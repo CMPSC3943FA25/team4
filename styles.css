@@ -1,1 +1,147 @@
+/* Base layout */
+body {
+  font-family: Arial, sans-serif;
+  background: #f7f7f7;
+  padding: 20px;
+}
 
+h1 {
+  text-align: center;
+  margin-bottom: 0.5rem;
+}
+
+/* SVG container */
+svg#svg, svg#us-map, svg {
+  width: 100%;
+  height: auto;
+  border: 1px solid #ccc;
+  background: white;
+}
+
+/* State styles */
+.state {
+  fill: #e0e0e0 !important;
+  stroke: #777 !important;
+  stroke-width: 0.8 !important;
+  cursor: pointer;
+  transition: fill 0.15s ease;
+}
+
+.state:hover {
+  fill: #cfcfcf !important;
+}
+
+.state.visited {
+  fill: #2ecc71 !important;
+  stroke: #2e8b57 !important;
+}
+
+/* Progress counter */
+.progress-container {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background: white;
+  padding: 12px 16px;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  z-index: 1000;
+}
+
+.percentage-display {
+  text-align: center;
+}
+
+#percentage-number {
+  font-size: 40px;
+  font-weight: bold;
+  color: #2ecc71;
+  line-height: 1;
+}
+
+.progress-text {
+  margin-top: 6px;
+  color: #666;
+  font-size: 13px;
+}
+
+/* Tooltip label */
+.state-label {
+  position: absolute;
+  background: #333;
+  color: white;
+  padding: 5px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  z-index: 2000;
+  pointer-events: none;
+  white-space: nowrap;
+  display: none;
+}
+
+
+/* Always-visible state abbreviations */
+.state-abbrev {
+  font-family: Arial, sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  fill: #1f2937; /* neutral-800 */
+  paint-order: stroke;
+  stroke: white;
+  stroke-width: 2px;
+  pointer-events: none; /* don't block clicks */
+  user-select: none;
+  opacity: 0.95;
+}
+
+
+/* Centered title */
+h1 {
+  text-align: center !important;
+  margin-top: 20px;
+  margin-bottom: 10px;
+}
+
+/* Move progress counter to right */
+.progress-container {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background: white;
+  padding: 12px 16px;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  z-index: 1000;
+}
+
+/* Offset small states manually */
+#state-labels text[data-state="RI"],
+#state-labels text[data-state="DE"],
+#state-labels text[data-state="CT"],
+#state-labels text[data-state="NJ"],
+#state-labels text[data-state="MD"],
+#state-labels text[data-state="DC"] {
+  font-size: 10px;
+  transform: translate(8px, -8px);
+  fill: #1f2937;
+  stroke: white;
+  stroke-width: 2px;
+  paint-order: stroke;
+}
+
+
+/* Stylized US State Tracker title */
+h1 {
+  text-align: center !important;
+  font-size: 2.4rem;
+  font-weight: 800;
+  color: #1e3a8a; /* deep blue */
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-top: 20px;
+  margin-bottom: 10px;
+  text-shadow: 0 0 8px rgba(30, 58, 138, 0.4), 0 0 20px rgba(37, 99, 235, 0.2);
+  border-bottom: 3px solid #3b82f6;
+  display: inline-block;
+  padding-bottom: 6px;
+}
