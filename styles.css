@@ -1,4 +1,4 @@
-/* Base layout */
+/* Base */
 body {
   font-family: Arial, sans-serif;
   background: #f7f7f7;
@@ -95,14 +95,14 @@ svg#svg, svg#us-map, svg {
 }
 
 
-/* Centered title */
+/* Centered title ( can't figure this out) */
 h1 {
   text-align: center !important;
   margin-top: 20px;
   margin-bottom: 10px;
 }
 
-/* Move progress counter to right */
+/* Trying to move counter to right. idk  */
 .progress-container {
   position: fixed;
   top: 20px;
