@@ -10,8 +10,12 @@ body {
 svg#svg, svg#us-map, svg {
   width: 100%;
   height: auto;
-  border: 1px solid #ccc;
+  border: none;
   background: white;
+}
+
+.state:focus {
+  outline: none; /* removes blue focus border when clicking */
 }
 
 /* State styles */
