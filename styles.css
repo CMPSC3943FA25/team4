@@ -125,6 +125,42 @@ svg#svg, svg#us-map, svg {
   paint-order: stroke;
 }
 
+/*Centering Each states manually OK, TX, CA, LA, FL, HI, AK, MI, ID*/
+#state-labels text[data-state="OK"] {
+  transform: translate(20px, -2px);
+}
+
+#state-labels text[data-state="TX"] {
+  transform: translate(18px, -2px);
+}
+
+#state-labels text[data-state="CA"] {
+  transform: translate(-18px, 2px);
+}
+
+#state-labels text[data-state="LA"] {
+  transform: translate(-20px, 0px);
+}
+
+#state-labels text[data-state="FL"] {
+  transform: translate(44px, -6px);
+}
+
+#state-labels text[data-state="HI"] {
+  transform: translate(160px, 85px);
+}
+
+#state-labels text[data-state="AK"] {
+  transform: translate(60px, -10px);
+}
+
+#state-labels text[data-state="MI"] {
+  transform: translate(26px, 30px);
+}
+
+#state-labels text[data-state="ID"] {
+  transform: translate(-2px, 34px);
+}
 
 /* Stylized US State Tracker title */
 .TitleCard{
