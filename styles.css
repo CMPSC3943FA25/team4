@@ -36,7 +36,7 @@ svg#svg, svg#us-map, svg {
 .progress-container {
   position: fixed;
   top: 20px;
-  right: 20px;
+  left: 30px;
   background: white;
   padding: 12px 16px;
   border-radius: 10px;
@@ -98,7 +98,7 @@ svg#svg, svg#us-map, svg {
 .progress-container {
   position: fixed;
   top: 20px;
-  right: 20px;
+  left: 30px;
   background: white;
   padding: 12px 16px;
   border-radius: 10px;
