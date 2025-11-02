@@ -5,10 +5,6 @@ body {
   padding: 20px;
 }
 
-h1 {
-  text-align: center;
-  margin-bottom: 0.5rem;
-}
 
 /* SVG container */
 svg#svg, svg#us-map, svg {
@@ -96,11 +92,7 @@ svg#svg, svg#us-map, svg {
 
 
 /* Centered title ( can't figure this out) */
-h1 {
-  text-align: center !important;
-  margin-top: 20px;
-  margin-bottom: 10px;
-}
+
 
 /* Trying to move counter to right. idk  */
 .progress-container {
@@ -131,8 +123,9 @@ h1 {
 
 
 /* Stylized US State Tracker title */
-h1 {
-  text-align: center !important;
+.TitleCard{
+  position: absolute;
+  left: 40%;
   font-size: 2.4rem;
   font-weight: 800;
   color: #1e3a8a; /* deep blue */
@@ -145,3 +138,4 @@ h1 {
   display: inline-block;
   padding-bottom: 6px;
 }
+
