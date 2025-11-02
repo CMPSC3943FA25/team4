@@ -216,15 +216,15 @@ function addStateAbbrevLabels() {
 
   // Manual offsets (pixels in SVG coords) for tiny/clustered states
   const offsets = {
-    DC: {x: 20, y: -10},
-    DE: {x: 16, y: -6},
-    RI: {x: 18, y: -8},
-    CT: {x: 12, y: -10},
-    NJ: {x: 14, y: -8},
-    MD: {x: 18, y: -6},
-    MA: {x: 8, y: -10},
-    VT: {x: -8, y: -10},
-    NH: {x: 10, y: -12},
+    DC: {x: 0, y: 8},
+    DE: {x: 0, y: 14},
+    RI: {x: -2, y: 14},
+    CT: {x: -6, y: 4},
+    NJ: {x: -6, y: 0},
+    MD: {x: 0, y: 4},
+    MA: {x: 0, y: 0},
+    VT: {x: 0, y: -10},
+    NH: {x: -2, y: 10},
     ME: {x: 4, y: -8}
   };
 
