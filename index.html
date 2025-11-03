@@ -454,4 +454,50 @@
 </svg>
 
   <script src="script.js"></script>
+
+<script> //Adds dot by double clicking!
+  document.addEventListener('DOMContentLoaded', () => {
+    const svg = document.getElementById('svg');
+
+    // Double click anywhere on the map to add a small dot
+    svg.addEventListener('dblclick', e => {
+      e.stopPropagation(); // Prevent page zoom or other actions
+
+      // Get exact click position inside the SVG
+      const pt = svg.createSVGPoint();
+      pt.x = e.clientX;
+      pt.y = e.clientY;
+      const {x, y} = pt.matrixTransform(svg.getScreenCTM().inverse());
+
+      // Create a small dot
+      const dot = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+      dot.setAttribute('cx', x);
+      dot.setAttribute('cy', y);
+      dot.setAttribute('r', 4);                    // Smaller size
+      dot.setAttribute('fill', '#2754F5');         // Random blue 
+      dot.setAttribute('fill-opacity', 0.5);       // 50% translucent
+      dot.setAttribute('stroke', '#ffffff');       // White border
+      dot.setAttribute('stroke-width', 1);         // Thin border
+      dot.setAttribute('class', 'user-pin');
+      dot.style.cursor = 'pointer';
+
+      // Double click the dot again to remove it
+      dot.addEventListener('dblclick', ev => {
+        ev.stopPropagation();
+        dot.remove();
+      });
+
+      // Add the dot to the SVG
+      svg.appendChild(dot);
+    });
+
+    // Ctrl + double click on empty space to clear ALL dots
+    svg.addEventListener('dblclick', e => {
+      if (e.ctrlKey && e.target === svg) {
+        document.querySelectorAll('.user-pin').forEach(pin => pin.remove());
+      }
+    });
+  });
+</script>
+   
 </body>
