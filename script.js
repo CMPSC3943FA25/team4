@@ -101,7 +101,7 @@ function enhanceAccessibility() {
     el.addEventListener('keydown', (ev) => {
       if (ev.key === 'Enter' || ev.key === ' ') {
         ev.preventDefault();
-        toggleState(el);
+        openStateModal(el);
       }
     });
   });
@@ -119,9 +119,28 @@ function toggleState(el) {
 
 // Event delegation for clicks (works for inline SVGs)
 function initDelegatedClickHandler() {
+  let clickTimer = null;
+  const DOUBLE_CLICK_DELAY = 300;
   document.addEventListener('click', (e) => {
     const target = e.target.closest('.state');
     if (target) {
+      if (clickTimer) {
+        clearTimeout(clickTimer);
+        clickTimer = null;
+        return;
+      }
+      
+      clickTimer = setTimeout(() => {
+        openStateModal(target);
+        clickTimer = null;
+      }, DOUBLE_CLICK_DELAY);
+    }
+  });
+  
+  document.addEventListener('dblclick', (e) => {
+    if (clickTimer) {
+      clearTimeout(clickTimer);
+      clickTimer = null;
       toggleState(target);
     }
   });
@@ -248,3 +267,83 @@ function addStateAbbrevLabels() {
     g.appendChild(text);
   });
 }
+
+function openStateModal(stateElement) {
+  const modal = document.getElementById('state-modal');
+  const stateNameEl = document.getElementById('modal-state-name');
+  const toggleEl = document.getElementById('modal-visited-toggle');
+  
+  if (!modal || !stateNameEl || !toggleEl) return;
+  
+  const stateName = stateElement.getAttribute('data-state-name') || 
+                   stateElement.getAttribute('data-name') || 
+                   stateElement.id || 
+                   'Unknown State';
+  
+  stateNameEl.textContent = stateName;
+  
+  const isVisited = stateElement.classList.contains('visited');
+  toggleEl.checked = isVisited;
+  
+  modal.dataset.stateId = stateElement.id;
+  modal._stateElement = stateElement;
+  
+  modal.classList.remove('hidden');
+}
+
+function closeStateModal() {
+  const modal = document.getElementById('state-modal');
+  if (modal) {
+    modal.classList.add('hidden');
+    delete modal._stateElement;
+    delete modal.dataset.stateId;
+  }
+}
+
+function initModalListeners() {
+  const modal = document.getElementById('state-modal');
+  const closeBtn = modal?.querySelector('.close-btn');
+  const toggleEl = document.getElementById('modal-visited-toggle');
+  
+  if (closeBtn) {
+    closeBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      closeStateModal();
+    });
+  }
+  
+  if (modal) {
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) {
+        closeStateModal();
+      }
+    });
+  }
+  
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && modal && !modal.classList.contains('hidden')) {
+      closeStateModal();
+    }
+  });
+  
+  if (toggleEl) {
+    toggleEl.addEventListener('change', (e) => {
+      const modal = document.getElementById('state-modal');
+      const stateElement = modal?._stateElement;
+      
+      if (stateElement) {
+        const shouldBeVisited = e.target.checked;
+        const currentlyVisited = stateElement.classList.contains('visited');
+        
+        if (shouldBeVisited !== currentlyVisited) {
+          toggleState(stateElement);
+          toggleEl.checked = stateElement.classList.contains('visited');
+        }
+      }
+    });
+  }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  initModalListeners();
+});
