@@ -179,7 +179,7 @@ svg#svg, svg#us-map, svg {
   padding-bottom: 6px;
 }
 
-modal {
+.modal {
   position: fixed;
   top: 0;
   left: 0;
