@@ -162,13 +162,14 @@ svg#svg, svg#us-map, svg {
   transform: translate(-2px, 34px);
 }
 
-/* Stylized US State Tracker title */
+
 .TitleCard{
-  position: absolute;
-  left: 40%;
-  font-size: 2.4rem;
+ position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 2vw;;
   font-weight: 800;
-  color: #1e3a8a; /* deep blue */
+  color: #1e3a8a; 
   text-transform: uppercase;
   letter-spacing: 1px;
   margin-top: 20px;
