@@ -2,7 +2,8 @@
 body {
   font-family: Arial, sans-serif;
   background: #f7f7f7;
-  padding: 20px;
+  padding: clamp(10px, 4vw, 40px);
+   margin: 0;
 }
 
 
@@ -12,6 +13,8 @@ svg#svg, svg#us-map, svg {
   height: auto;
   border: none;
   background: white;
+  
+  height: auto;
 }
 
 .state:focus {
@@ -39,13 +42,15 @@ svg#svg, svg#us-map, svg {
 /* Progress counter */
 .progress-container {
   position: fixed;
-  top: 20px;
-  left: 30px;
+  top: 20vh;
+  left: 30vw;
   background: white;
-  padding: 12px 16px;
+  padding: clamp(8px, 2vw, 20px);
   border-radius: 10px;
   box-shadow: 0 2px 10px rgba(0,0,0,0.1);
   z-index: 1000;
+  max-width: 90vw;
+  overflow: auto;
 }
 
 .percentage-display {
@@ -53,7 +58,7 @@ svg#svg, svg#us-map, svg {
 }
 
 #percentage-number {
-  font-size: 40px;
+  font-size: 5vw;
   font-weight: bold;
   color: #2ecc71;
   line-height: 1;
@@ -62,7 +67,7 @@ svg#svg, svg#us-map, svg {
 .progress-text {
   margin-top: 6px;
   color: #666;
-  font-size: 13px;
+  font-size: 1vw;
 }
 
 /* Tooltip label */
@@ -70,13 +75,14 @@ svg#svg, svg#us-map, svg {
   position: absolute;
   background: #333;
   color: white;
-  padding: 5px 8px;
+  padding: 5vh 8vw;
   border-radius: 4px;
   font-size: 12px;
   z-index: 2000;
   pointer-events: none;
   white-space: nowrap;
   display: none;
+
 }
 
 
@@ -162,22 +168,20 @@ svg#svg, svg#us-map, svg {
   transform: translate(-2px, 34px);
 }
 
-
+/* Stylized US State Tracker title */
 .TitleCard{
- position: absolute;
+  position: absolute;
   left: 50%;
-  transform: translateX(-50%);
-  font-size: 2vw;;
+  font-size: clamp(1.2rem, 2vw, 2rem);
   font-weight: 800;
-  color: #1e3a8a; 
+  color: #1e3a8a; /* deep blue */
   text-transform: uppercase;
-  letter-spacing: 1px;
-  margin-top: 20px;
-  margin-bottom: 10px;
+  letter-spacing: 0.1em;
+  margin: 2vh auto 1vw;
   text-shadow: 0 0 8px rgba(30, 58, 138, 0.4), 0 0 20px rgba(37, 99, 235, 0.2);
-  border-bottom: 3px solid #3b82f6;
-  display: inline-block;
-  padding-bottom: 6px;
+  border-bottom: 0.1em solid #3b82f6;
+  display: block;
+  padding-bottom: 0.4em;
 }
 
 .modal {
@@ -415,4 +419,52 @@ svg#svg, svg#us-map, svg {
   .modal-content h2 {
     font-size: 20px;
   }
+}
+
+/* Dark mode (automatic)- this may need to be messed with later imma be 100% */
+@media (prefers-color-scheme: dark) {
+  body {
+    background: #121212;
+    color: #e5e5e5;
+  }
+
+  .progress-container {
+    background: #1e1e1e;
+    color: #fff;
+    box-shadow: 0 2px 10px rgba(255,255,255,0.1);
+  }
+
+  .TitleCard {
+    color: #60a5fa; /* lighter blue */
+    border-bottom-color: #3b82f6;
+    text-shadow: 0 0 8px rgba(96,165,250,0.4);
+  }
+
+  .state {
+    fill: #2d2d2d !important;
+    stroke: #888 !important;
+  }
+
+  .state:hover {
+    fill: #3a3a3a !important;
+  }
+
+  .state.visited {
+    fill: #16a34a !important;
+    stroke: #15803d !important;
+  }
+
+  .modal-content {
+    background: #1f1f1f;
+    color: #e5e5e5;
+  }
+
+  .state-label {
+    background: #222;
+    color: #eee;
+  }
+    svg#svg, svg#us-map, svg {
+    background: #1a1a1a;
+  }
+
 }
