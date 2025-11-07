@@ -453,6 +453,11 @@ svg#svg, svg#us-map, svg {
     fill: #16a34a !important;
     stroke: #15803d !important;
   }
+.visit-toggle span {
+  font-size: 16px;
+  color: #ffffff;
+  font-weight: 500;
+}
 
   .modal-content {
     background: #1f1f1f;
