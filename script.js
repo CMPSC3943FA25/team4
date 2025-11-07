@@ -270,10 +270,11 @@ function addStateAbbrevLabels() {
 
 function openStateModal(stateElement) {
   const modal = document.getElementById('state-modal');
+  const modalContent = modal?.querySelector('.modal-content');
   const stateNameEl = document.getElementById('modal-state-name');
   const toggleEl = document.getElementById('modal-visited-toggle');
   
-  if (!modal || !stateNameEl || !toggleEl) return;
+  if (!modal || !modalContent || !stateNameEl || !toggleEl) return;
   
   const stateName = stateElement.getAttribute('data-state-name') || 
                    stateElement.getAttribute('data-name') || 
@@ -290,6 +291,31 @@ function openStateModal(stateElement) {
   
   modal.classList.remove('hidden');
 }
+
+setTimeout(() => {
+    const svg = stateElement.ownerSVGElement || stateElement.closest('svg');
+    if (!svg) return;
+    
+    const bbox = stateElement.getBBox();
+    const centerX = bbox.x + bbox.width / 2;
+    const centerY = bbox.y + bbox.height / 2;
+    
+    const svgPoint = svg.createSVGPoint();
+    svgPoint.x = centerX;
+    svgPoint.y = centerY;
+    const screenPoint = svgPoint.matrixTransform(svg.getScreenCTM());
+    
+    const isOnLeftSide = screenPoint.x < window.innerWidth / 2;
+    const spacing = 20;
+    
+    if (isOnLeftSide) {
+      modalContent.style.left = (screenPoint.x + spacing) + 'px';
+    } else {
+      modalContent.style.left = (screenPoint.x - modalContent.offsetWidth - spacing) + 'px';
+    }
+    
+    modalContent.style.top = (screenPoint.y - modalContent.offsetHeight / 2) + 'px';
+  }, 0);
 
 function closeStateModal() {
   const modal = document.getElementById('state-modal');
