@@ -171,7 +171,7 @@ svg#svg, svg#us-map, svg {
 /* Stylized US State Tracker title */
 .TitleCard{
   position: absolute;
-  left: 50%;
+  left: 40%;
   font-size: clamp(1.2rem, 2vw, 2rem);
   font-weight: 800;
   color: #1e3a8a; /* deep blue */
