@@ -75,14 +75,14 @@ svg#svg, svg#us-map, svg {
   position: absolute;
   background: #333;
   color: white;
-  padding: 5vh 8vw;
+  padding: 4px 6px;
   border-radius: 4px;
   font-size: 12px;
   z-index: 2000;
   pointer-events: none;
   white-space: nowrap;
   display: none;
-
+  max-width: max-content;
 }
 
 
@@ -116,13 +116,12 @@ svg#svg, svg#us-map, svg {
   z-index: 1000;
 }
 
-/* Offset small states manually (some still not right*/
+/* Offset small states manually */
 #state-labels text[data-state="RI"],
 #state-labels text[data-state="DE"],
 #state-labels text[data-state="CT"],
 #state-labels text[data-state="NJ"],
-#state-labels text[data-state="MD"],
-#state-labels text[data-state="DC"] {
+#state-labels text[data-state="MD"] {
   font-size: 10px;
   transform: translate(8px, -8px);
   fill: #1f2937;
@@ -131,7 +130,7 @@ svg#svg, svg#us-map, svg {
   paint-order: stroke;
 }
 
-/*Centering Each states manually OK, TX, CA, LA, FL, HI, AK, MI, ID*/
+/*Centering Each states manually OK, TX, CA, LA, FL, HI, AK, MI, ID, SC, VA, WV, MN, KY*/
 #state-labels text[data-state="OK"] {
   transform: translate(20px, -2px);
 }
@@ -166,6 +165,26 @@ svg#svg, svg#us-map, svg {
 
 #state-labels text[data-state="ID"] {
   transform: translate(-2px, 34px);
+}
+
+#state-labels text[data-state="SC"] {
+  transform: translate(2px, -5px);
+}
+
+#state-labels text[data-state="VA"] {
+  transform: translate(15px, 0px);
+}
+
+#state-labels text[data-state="WV"] {
+  transform: translate(-10px, 10px);
+}
+
+#state-labels text[data-state="MN"] {
+  transform: translate(-10px, 0px);
+}
+
+#state-labels text[data-state="KY"] {
+  transform: translate(15px, 0px);
 }
 
 /* Stylized US State Tracker title */

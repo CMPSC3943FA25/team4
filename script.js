@@ -118,7 +118,7 @@ function addStateLabels() {
 
   function positionTooltip(e, element) {
     const offsetX = 10;
-    const offsetY = -30;
+    const offsetY = -20;
     const left = e.pageX + offsetX;
     const top = e.pageY + offsetY;
     element.style.left = left + 'px';
