@@ -211,8 +211,45 @@ svg#svg, svg#us-map, svg {
   max-width: 400px;
   width: 90%;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-  position: relative;
+  position: absolute;
   animation: fadeIn 0.2s ease;
+}
+
+.visit-date-section {
+  display: none;
+  margin-top: 20px;
+}
+
+.visit-date-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.visit-date-inputs {
+  margin-top: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.visit-date-inputs input[type="date"] {
+  padding: 6px 8px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+.visit-date-separator {
+  font-size: 16px;
+  color: #4b5563;
+}
+
+.visit-date-display {
+  margin-top: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #1e3a8a;
 }
 
 @keyframes fadeIn {
