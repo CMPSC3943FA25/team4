@@ -21,6 +21,40 @@ function saveVisitedToStorage() {
   } catch (e) {}
 }
 
+const VISIT_DATES_KEY = 'visitDates.v1';
+let visitDateCache = loadVisitDatesFromStorage();
+
+function loadVisitDatesFromStorage() {
+  try {
+    const raw = localStorage.getItem(VISIT_DATES_KEY);
+    if (!raw) return {};
+    const parsed = JSON.parse(raw);
+    return parsed && typeof parsed === 'object' ? parsed : {};
+  } catch (e) {
+    return {};
+  }
+}
+
+function saveVisitDatesToStorage() {
+  try {
+    localStorage.setItem(VISIT_DATES_KEY, JSON.stringify(visitDateCache));
+  } catch (e) {}
+}
+
+function setVisitDatesForState(stateId, start, end) {
+  if (!stateId) return;
+  if (!start && !end) {
+    delete visitDateCache[stateId];
+  } else {
+    visitDateCache[stateId] = { start, end };
+  }
+  saveVisitDatesToStorage();
+}
+
+function getVisitDatesForState(stateId) {
+  return visitDateCache[stateId] || null;
+}
+
 // === Visual helpers (force inline fill to win over SVG inline styles) ===
 const FILL_DEFAULT = '#e0e0e0';
 const FILL_VISITED = '#2ecc71';
@@ -268,6 +302,58 @@ function addStateAbbrevLabels() {
   });
 }
 
+function getVisitDateElements() {
+  const modal = document.getElementById('state-modal');
+  return {
+    section: modal?.querySelector('#visit-date-section') || null,
+    startInput: modal?.querySelector('#visit-start-date') || null,
+    endInput: modal?.querySelector('#visit-end-date') || null,
+    display: modal?.querySelector('#visit-date-display') || null
+  };
+}
+
+function setVisitDateSectionVisibility(isVisible) {
+  const { section } = getVisitDateElements();
+  if (section) {
+    section.style.display = isVisible ? 'block' : 'none';
+  }
+}
+
+function formatVisitDateForDisplay(value) {
+  if (!value) return '';
+  const parts = value.split('-');
+  if (parts.length !== 3) return value;
+  const [year, month, day] = parts;
+  const monthNumber = parseInt(month, 10);
+  const dayNumber = parseInt(day, 10);
+  if (!year || Number.isNaN(monthNumber) || Number.isNaN(dayNumber)) return value;
+  return `${monthNumber}/${dayNumber}/${year}`;
+}
+
+function buildVisitDateLabel(startDate, endDate) {
+  if (!startDate && !endDate) return '';
+  const startText = startDate ? formatVisitDateForDisplay(startDate) : '...';
+  const endText = endDate ? formatVisitDateForDisplay(endDate) : '...';
+  return `Visited ${startText} - ${endText}`;
+}
+
+function updateVisitDateDisplay() {
+  const { startInput, endInput, display } = getVisitDateElements();
+  if (!display || !startInput || !endInput) return;
+  const text = buildVisitDateLabel(startInput.value, endInput.value);
+  display.textContent = text;
+  display.style.display = text ? '' : 'none';
+}
+
+function hydrateVisitDateInputs(stateId) {
+  const { startInput, endInput } = getVisitDateElements();
+  if (!startInput || !endInput) return;
+  const stored = getVisitDatesForState(stateId) || {};
+  startInput.value = stored.start || '';
+  endInput.value = stored.end || '';
+  updateVisitDateDisplay();
+}
+
 function openStateModal(stateElement) {
   const modal = document.getElementById('state-modal');
   const modalContent = modal?.querySelector('.modal-content');
@@ -290,6 +376,34 @@ function openStateModal(stateElement) {
   modal._stateElement = stateElement;
   
   modal.classList.remove('hidden');
+
+  setVisitDateSectionVisibility(isVisited);
+  hydrateVisitDateInputs(stateElement.id);
+  
+  setTimeout(() => {
+    const svg = stateElement.ownerSVGElement || stateElement.closest('svg');
+    if (!svg) return;
+    
+    const bbox = stateElement.getBBox();
+    const centerX = bbox.x + bbox.width / 2;
+    const centerY = bbox.y + bbox.height / 2;
+    
+    const svgPoint = svg.createSVGPoint();
+    svgPoint.x = centerX;
+    svgPoint.y = centerY;
+    const screenPoint = svgPoint.matrixTransform(svg.getScreenCTM());
+    
+    const isOnLeftSide = screenPoint.x < window.innerWidth / 2;
+    const spacing = 20;
+    
+    if (isOnLeftSide) {
+      modalContent.style.left = (screenPoint.x + spacing) + 'px';
+    } else {
+      modalContent.style.left = (screenPoint.x - modalContent.offsetWidth - spacing) + 'px';
+    }
+    
+    modalContent.style.top = (screenPoint.y - modalContent.offsetHeight / 2) + 'px';
+  }, 0);
 }
 
 setTimeout(() => {
@@ -330,6 +444,8 @@ function initModalListeners() {
   const modal = document.getElementById('state-modal');
   const closeBtn = modal?.querySelector('.close-btn');
   const toggleEl = document.getElementById('modal-visited-toggle');
+  const startInput = document.getElementById('visit-start-date');
+  const endInput = document.getElementById('visit-end-date');
   
   if (closeBtn) {
     closeBtn.addEventListener('click', (e) => {
@@ -337,6 +453,21 @@ function initModalListeners() {
       closeStateModal();
     });
   }
+
+  const handleDateChange = () => {
+    const activeModal = document.getElementById('state-modal');
+    const stateId = activeModal?.dataset.stateId;
+    if (!stateId) return;
+    const startValue = startInput?.value || '';
+    const endValue = endInput?.value || '';
+    setVisitDatesForState(stateId, startValue, endValue);
+    updateVisitDateDisplay();
+  };
+  
+  startInput?.addEventListener('change', handleDateChange);
+  startInput?.addEventListener('input', handleDateChange);
+  endInput?.addEventListener('change', handleDateChange);
+  endInput?.addEventListener('input', handleDateChange);
   
   if (modal) {
     modal.addEventListener('click', (e) => {
@@ -354,10 +485,10 @@ function initModalListeners() {
   
   if (toggleEl) {
     toggleEl.addEventListener('change', (e) => {
-      const modal = document.getElementById('state-modal');
-      const stateElement = modal?._stateElement;
+      const activeModal = document.getElementById('state-modal');
+      const stateElement = activeModal?._stateElement;
       
-      if (stateElement) {
+      if (!stateElement) return;
         const shouldBeVisited = e.target.checked;
         const currentlyVisited = stateElement.classList.contains('visited');
         
@@ -365,6 +496,14 @@ function initModalListeners() {
           toggleState(stateElement);
           toggleEl.checked = stateElement.classList.contains('visited');
         }
+
+         setVisitDateSectionVisibility(toggleEl.checked);
+      if (toggleEl.checked) {
+        hydrateVisitDateInputs(stateElement.id);
+        const { startInput: focusStart } = getVisitDateElements();
+        focusStart?.focus();
+      } else {
+        updateVisitDateDisplay();
       }
     });
   }
