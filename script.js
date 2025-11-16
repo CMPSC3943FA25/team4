@@ -204,6 +204,13 @@ document.addEventListener('DOMContentLoaded', function () {
   enhanceAccessibility();
   initDelegatedClickHandler();
   updateProgress();
+
+  // favorites and notes
+  addFavoritesCounter();
+  const notes = getNotesFromStorage();
+  Object.keys(notes).forEach(id => updateStateNotesIndicator(id, true));
+  const favorites = getFavoritesFromStorage();
+  favorites.forEach(id => addStarToState(id));
 });
 
 
@@ -345,6 +352,252 @@ function updateVisitDateDisplay() {
   display.style.display = text ? '' : 'none';
 }
 
+// === Favorites and Notes storage ===
+const FAVORITES_KEY = 'favoriteStates.v1';
+const NOTES_KEY = 'stateNotes.v1';
+
+function getFavoritesFromStorage() {
+  try {
+    const raw = localStorage.getItem(FAVORITES_KEY);
+    return raw ? new Set(JSON.parse(raw)) : new Set();
+  } catch (e) {
+    return new Set();
+  }
+}
+
+function saveFavoritesToStorage(favorites) {
+  try {
+    localStorage.setItem(FAVORITES_KEY, JSON.stringify(Array.from(favorites)));
+  } catch (e) {
+    console.error('Failed to save favorites:', e);
+  }
+}
+
+function getNotesFromStorage() {
+  try {
+    const raw = localStorage.getItem(NOTES_KEY);
+    return raw ? JSON.parse(raw) : {};
+  } catch (e) {
+    return {};
+  }
+}
+
+function saveNoteForState(stateId, note) {
+  const notes = getNotesFromStorage();
+  if (note && note.trim()) {
+    notes[stateId] = note.trim();
+  } else {
+    delete notes[stateId];
+  }
+  try {
+    localStorage.setItem(NOTES_KEY, JSON.stringify(notes));
+    updateStateNotesIndicator(stateId, !!notes[stateId]);
+    return true;
+  } catch (e) {
+    console.error('Failed to save note:', e);
+    return false;
+  }
+}
+
+function getNoteForState(stateId) {
+  const notes = getNotesFromStorage();
+  return notes[stateId] || '';
+}
+
+function updateStateNotesIndicator(stateId, hasNotes) {
+  const state = document.getElementById(stateId);
+  if (!state) return;
+  state.classList.toggle('has-notes', !!hasNotes);
+}
+
+// Place a star near the top-right of a state path for favorites (for now needs to be moved)
+function addStarToState(stateId) {
+  const state = document.getElementById(stateId);
+  if (!state) return;
+  const svg = state.ownerSVGElement || state.closest('svg');
+  if (!svg) return;
+
+  const existing = svg.querySelector('#star-' + stateId);
+  if (existing) return;
+
+  const bbox = state.getBBox();
+  const star = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+  star.setAttribute('id', 'star-' + stateId);
+  star.setAttribute('x', bbox.x + bbox.width - 10);
+  star.setAttribute('y', bbox.y + 15);
+  star.setAttribute('class', 'state-favorite-star');
+  star.setAttribute('font-size', '12');
+  star.textContent = '\u2605'; // ★
+  svg.appendChild(star);
+}
+
+function removeStarFromState(stateId) {
+  const star = document.getElementById('star-' + stateId);
+  if (star) star.remove();
+}
+
+function updateFavoritesDisplay() {
+  const favorites = getFavoritesFromStorage();
+  const counter = document.getElementById('favorites-count');
+  if (counter) {
+    counter.textContent = favorites.size;
+  }
+}
+
+function handleResetClick() {
+  if (!window.confirm('Clear all visited states, favorites, notes, and pins?')) return;
+
+  try {
+    localStorage.removeItem(STORAGE_KEY);
+    localStorage.removeItem(VISIT_DATES_KEY);
+    localStorage.removeItem(FAVORITES_KEY);
+    localStorage.removeItem(NOTES_KEY);
+    localStorage.removeItem('mapDots');
+  } catch (e) {}
+
+  // Reset states
+  document.querySelectorAll('.state').forEach(el => {
+    el.classList.remove('visited', 'has-notes');
+    setVisitedVisual(el, false);
+    el.setAttribute('aria-pressed', 'false');
+  });
+
+  // Remove any favorite stars
+  document.querySelectorAll('.state-favorite-star').forEach(node => node.remove());
+
+  // Reset visit date cache and UI
+  visitDateCache = {};
+  const { startInput, endInput, display } = getVisitDateElements();
+  if (startInput) startInput.value = '';
+  if (endInput) endInput.value = '';
+  if (display) {
+    display.textContent = '';
+    display.style.display = 'none';
+  }
+
+  // Reset counters
+  updateProgress();
+  updateFavoritesDisplay();
+}
+
+function addFavoritesCounter() {
+  if (!document.querySelector('.favorites-counter')) {
+    const counter = document.createElement('div');
+    counter.className = 'favorites-counter';
+    counter.innerHTML = ''
+      + '<span class="star-icon">\u2605</span>'
+      + '<span><span id="favorites-count">0</span> Favorites</span>'
+      + '<button type="button" class="reset-btn" id="reset-data-btn" title="Clear all saved data">Reset</button>';
+    document.body.appendChild(counter);
+
+    const resetBtn = counter.querySelector('#reset-data-btn');
+    if (resetBtn) {
+      resetBtn.addEventListener('click', handleResetClick);
+    }
+  }
+  updateFavoritesDisplay();
+}
+
+function toggleFavorite(stateId) {
+  const favorites = getFavoritesFromStorage();
+  if (favorites.has(stateId)) {
+    favorites.delete(stateId);
+  } else {
+    favorites.add(stateId);
+  }
+  saveFavoritesToStorage(favorites);
+  updateFavoritesDisplay();
+  return favorites.has(stateId);
+}
+
+function updateCharCount() {
+  const textarea = document.getElementById('state-notes');
+  const charCount = document.getElementById('char-count');
+  if (textarea && charCount) {
+    charCount.textContent = textarea.value.length;
+  }
+}
+
+// Inject favorites and also notes controls into the modal
+function updateModalContent(stateId, stateName) {
+  const modal = document.querySelector('.modal-content');
+  if (!modal) return;
+  const extraContainer = modal.querySelector('#extra-features');
+  if (!extraContainer) return;
+
+  // Favorite section
+  let favoriteSection = modal.querySelector('.favorite-section');
+  if (!favoriteSection) {
+    favoriteSection = document.createElement('div');
+    favoriteSection.className = 'favorite-section';
+    favoriteSection.innerHTML = ''
+      + '<button class="favorite-btn" id="favorite-btn">'
+      + '  <span class="star-icon">\u2606</span>'
+      + '  <span>Add to Favorites</span>'
+      + '</button>';
+    extraContainer.appendChild(favoriteSection);
+  }
+
+  const favoriteBtn = favoriteSection.querySelector('#favorite-btn');
+  const favorites = getFavoritesFromStorage();
+  if (favorites.has(stateId)) {
+    favoriteBtn.classList.add('active');
+    favoriteBtn.querySelector('.star-icon').textContent = '\u2605';
+    favoriteBtn.querySelector('span:last-child').textContent = 'Remove from Favorites';
+  } else {
+    favoriteBtn.classList.remove('active');
+    favoriteBtn.querySelector('.star-icon').textContent = '\u2606';
+    favoriteBtn.querySelector('span:last-child').textContent = 'Add to Favorites';
+  }
+
+  favoriteBtn.onclick = function () {
+    const isFavorite = toggleFavorite(stateId);
+    if (isFavorite) {
+      this.classList.add('active');
+      this.querySelector('.star-icon').textContent = '\u2605';
+      this.querySelector('span:last-child').textContent = 'Remove from Favorites';
+      addStarToState(stateId);
+    } else {
+      this.classList.remove('active');
+      this.querySelector('.star-icon').textContent = '\u2606';
+      this.querySelector('span:last-child').textContent = 'Add to Favorites';
+      removeStarFromState(stateId);
+    }
+  };
+
+  // Notes section
+  let notesSection = modal.querySelector('.notes-section');
+  if (!notesSection) {
+    notesSection = document.createElement('div');
+    notesSection.className = 'notes-section';
+    notesSection.innerHTML = ''
+      + '<label class="notes-label" for="state-notes">Personal Notes</label>'
+      + '<textarea id="state-notes" class="notes-textarea" maxlength="500"></textarea>'
+      + '<div class="notes-char-count"><span id="char-count">0</span> / 500 characters</div>'
+      + '<button class="save-notes-btn" id="save-notes-btn" type="button">Save Notes</button>';
+    extraContainer.appendChild(notesSection);
+  }
+
+  const notesTextarea = notesSection.querySelector('#state-notes');
+  const saveButton = notesSection.querySelector('#save-notes-btn');
+
+  notesTextarea.value = getNoteForState(stateId);
+  updateCharCount();
+  notesTextarea.oninput = updateCharCount;
+
+  saveButton.onclick = function () {
+    const saved = saveNoteForState(stateId, notesTextarea.value);
+    if (saved) {
+      this.textContent = 'Saved!';
+      this.classList.add('saved');
+      setTimeout(() => {
+        this.textContent = 'Save Notes';
+        this.classList.remove('saved');
+      }, 1500);
+    }
+  };
+}
+
 function hydrateVisitDateInputs(stateId) {
   const { startInput, endInput } = getVisitDateElements();
   if (!startInput || !endInput) return;
@@ -368,6 +621,9 @@ function openStateModal(stateElement) {
                    'Unknown State';
   
   stateNameEl.textContent = stateName;
+
+  // Inject favorites + notes UI
+  updateModalContent(stateElement.id, stateName);
   
   const isVisited = stateElement.classList.contains('visited');
   toggleEl.checked = isVisited;
