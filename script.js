@@ -1,5 +1,7 @@
 // === Persistence keys ===
 const STORAGE_KEY = 'visitedStates.v1';
+const RATINGS_KEY = 'stateRatings.v1';
+let lastClickedState = null; // {id, name}
 
 function getVisitedFromStorage() {
   try {
@@ -478,6 +480,11 @@ function handleResetClick() {
   // Reset counters
   updateProgress();
   updateFavoritesDisplay();
+
+  //reset rating
+  localStorage.removeItem(RATINGS_KEY);
+  lastClickedState = null;
+  updateLastRatingDisplay();
 }
 
 function addFavoritesCounter() {
@@ -578,6 +585,57 @@ function updateModalContent(stateId, stateName) {
     extraContainer.appendChild(notesSection);
   }
 
+    // Star rating section 
+  let ratingSection = modal.querySelector('.rating-section');
+  if (!ratingSection) {
+    ratingSection = document.createElement('div');
+    ratingSection.className = 'rating-section';
+    ratingSection.innerHTML = `
+      <div class="rating-label">Your rating</div>
+      <div class="star-rating">
+        <span class="star" data-value="1">☆</span>
+        <span class="star" data-value="2">☆</span>
+        <span class="star" data-value="3">☆</span>
+        <span class="star" data-value="4">☆</span>
+        <span class="star" data-value="5">☆</span>
+      </div>
+    `;
+    extraContainer.appendChild(ratingSection);
+  }
+
+  const starContainer = ratingSection.querySelector('.star-rating');
+  const starElements = starContainer.querySelectorAll('.star');
+  let currentRating = getRatingForState(stateId);
+
+  const fillStars = (num) => {
+    starElements.forEach(star => {
+      if (parseInt(star.dataset.value) <= num) {
+        star.textContent = '★';
+        star.classList.add('filled');
+      } else {
+        star.textContent = '☆';
+        star.classList.remove('filled');
+      }
+    });
+  };
+
+  fillStars(currentRating);
+
+  // Hover preview
+  starContainer.onmouseleave = () => fillStars(currentRating);
+
+  starElements.forEach(star => {
+    star.onmouseover = () => fillStars(star.dataset.value);
+    star.onclick = () => {
+      const clicked = parseInt(star.dataset.value);
+      // Clicking the star again clears rating, should work
+      currentRating = (currentRating === clicked) ? 0 : clicked;
+      saveStateRating(stateId, currentRating);
+      fillStars(currentRating);
+      updateLastRatingDisplay();
+    };
+  });
+
   const notesTextarea = notesSection.querySelector('#state-notes');
   const saveButton = notesSection.querySelector('#save-notes-btn');
 
@@ -621,6 +679,8 @@ function openStateModal(stateElement) {
                    'Unknown State';
   
   stateNameEl.textContent = stateName;
+  lastClickedState = { id: stateElement.id, name: stateName }; //added for star system
+  updateLastRatingDisplay(); //added for star system
 
   // Inject favorites + notes UI
   updateModalContent(stateElement.id, stateName);
@@ -695,6 +755,52 @@ function closeStateModal() {
     delete modal.dataset.stateId;
   }
 }
+
+//---------state rating system-------------
+function getStateRatings() {
+  try {
+    const raw = localStorage.getItem(RATINGS_KEY);
+    if (!raw) return {};
+    const parsed = JSON.parse(raw);
+    return parsed && typeof parsed === 'object' ? parsed : {};
+  } catch (e) {
+    return {};
+  }
+}
+
+function getRatingForState(stateId) {
+  return getStateRatings()[stateId] || 0;
+}
+
+function saveStateRating(stateId, rating) {
+  const ratings = getStateRatings();
+  if (rating > 0) {
+    ratings[stateId] = rating;
+  } else {
+    delete ratings[stateId];
+  }
+  try {
+    localStorage.setItem(RATINGS_KEY, JSON.stringify(ratings));
+  } catch (e) {
+    console.error(e);
+  }
+}
+
+function updateLastRatingDisplay() {
+  const el = document.getElementById('last-state-rating');
+  if (!lastClickedState) {
+    el.innerHTML = '';
+    return;
+  }
+  const rating = getRatingForState(lastClickedState.id);
+  let stars = '';
+  for (let i = 1; i <= 5; i++) {
+    if (i <= rating) stars += '<span class="filled-star">★</span>';
+    else stars += '<span class="empty-star">☆</span>';
+  }
+  el.innerHTML = `<strong>${lastClickedState.name}</strong> ${stars}`;
+} //----------end of state rating-----------------
+
 
 function initModalListeners() {
   const modal = document.getElementById('state-modal');
