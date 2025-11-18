@@ -756,7 +756,7 @@ function closeStateModal() {
   }
 }
 
-//---------state rating system-------------
+//---------state rating system----------
 function getStateRatings() {
   try {
     const raw = localStorage.getItem(RATINGS_KEY);
@@ -799,7 +799,7 @@ function updateLastRatingDisplay() {
     else stars += '<span class="empty-star">☆</span>';
   }
   el.innerHTML = `<strong>${lastClickedState.name}</strong> ${stars}`;
-} //----------end of state rating-----------------
+} //---------end of state rating----------
 
 
 function initModalListeners() {
