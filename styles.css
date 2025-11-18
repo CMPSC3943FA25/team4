@@ -730,3 +730,54 @@ svg#svg, svg#us-map, svg {
   }
 }
 
+/* --------- Star Rating Stuff --------- */
+.rating-section {
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid #e5e7eb;
+}
+
+.rating-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #1f2937;
+  display: block;
+  margin-bottom: 8px;
+}
+
+.star-rating {
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
+}
+
+.star {
+  font-size: 34px;
+  cursor: pointer;
+  color: #ccc;
+  transition: color 0.15s;
+}
+
+.star.filled {
+  color: #fbbf24;
+}
+
+.last-rating {
+  margin-top: 14px;
+  font-size: 18px;
+  font-weight: 500;
+  color: #333;
+  min-height: 26px; 
+}
+
+.filled-star { color: #fbbf24; }
+.empty-star { color: #ccc; }
+
+/* Dark mode */
+@media (prefers-color-scheme: dark) {
+  .rating-label { color: #e5e7eb; }
+  .star { color: #666; }
+  .last-rating { color: #e5e5e5; }
+  .empty-star { color: #777; }
+}
+/*------------- End of star rating --------------------*/
