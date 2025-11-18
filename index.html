@@ -491,7 +491,7 @@
       svg.appendChild(dot);
     });
 
-    // Ctrl + double click on empty space to clear ALL dots
+    // Ctrl + double click to clear ALL dots
     svg.addEventListener('dblclick', e => {
       if (e.ctrlKey && e.target === svg) {
         document.querySelectorAll('.user-pin').forEach(pin => pin.remove());
@@ -523,6 +523,6 @@
     <div id="extra-features"></div>
   </div>
 </div>
-   
+   <div id="last-state-rating" class="last-rating"></div> <!-- Star rating -->
 </body>
 </html>
