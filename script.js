@@ -3,6 +3,60 @@ const STORAGE_KEY = 'visitedStates.v1';
 const RATINGS_KEY = 'stateRatings.v1';
 let lastClickedState = null; // {id, name}
 
+// === State images mapping ===
+const STATE_IMAGES = {
+  'AL': 'Alabama.jpg',
+  'AK': 'Alaska.jpg',
+  'AZ': 'Arizona.jpg',
+  'AR': 'Arkansas.jpg',
+  'CA': 'California.jpg',
+  'CO': 'Colorado.jpg',
+  'CT': 'Connecticut.jpg',
+  'DE': 'Delaware.jpg',
+  'FL': 'Florida.jpg',
+  'GA': 'Georgia.jpg',
+  'HI': 'Hawaii.jpg',
+  'ID': 'Idaho.jpg',
+  'IL': 'Illinois.jpg',
+  'IN': 'Indiana.jpg',
+  'IA': 'Iowa.jpg',
+  'KS': 'Kansas.jpg',
+  'KY': 'Kentucky.jpg',
+  'LA': 'Louisiana.jpg',
+  'ME': 'Maine.jpg',
+  'MD': 'Maryland.jpg',
+  'MA': 'Massachusetts.jpg',
+  'MI': 'Michigan.jpg',
+  'MN': 'Minnesota.jpg',
+  'MS': 'Mississippi.jpg',
+  'MO': 'Missouri.jpg',
+  'MT': 'Montana.jpg',
+  'NE': 'Nebraska.jpg',
+  'NV': 'Nevada.jpg',
+  'NH': 'NewHampshire.jpg',
+  'NJ': 'NewJersey.jpg',
+  'NM': 'NewMexico.jpg',
+  'NY': 'NewYork.jpg',
+  'NC': 'NorthCarolina.jpg',
+  'ND': 'NorthDakota.jpg',
+  'OH': 'Ohio.jpg',
+  'OK': 'Oklahoma.jpg',
+  'OR': 'Oregon.jpg',
+  'PA': 'Pennsylvania.jpg',
+  'RI': 'RhodeIsland.jpg',
+  'SC': 'SouthCarolina.jpg',
+  'SD': 'SouthDakota.jpg',
+  'TN': 'Tennessee.jpg',
+  'TX': 'Texas.jpg',
+  'UT': 'Utah.jpg',
+  'VT': 'Vermont.jpg',
+  'VA': 'Virginia.jpg',
+  'WA': 'Washington.jpg',
+  'WV': 'WestVirginia.jpg',
+  'WI': 'Wisconsin.jpg',
+  'WY': 'Wyoming.jpg'
+};
+
 function getVisitedFromStorage() {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
