@@ -723,6 +723,7 @@ function openStateModal(stateElement) {
   const modal = document.getElementById('state-modal');
   const modalContent = modal?.querySelector('.modal-content');
   const stateNameEl = document.getElementById('modal-state-name');
+  const stateImageEl = document.getElementById('modal-state-image');
   const toggleEl = document.getElementById('modal-visited-toggle');
   
   if (!modal || !modalContent || !stateNameEl || !toggleEl) return;
@@ -735,6 +736,15 @@ function openStateModal(stateElement) {
   stateNameEl.textContent = stateName;
   lastClickedState = { id: stateElement.id, name: stateName }; //added for star system
   updateLastRatingDisplay(); //added for star system
+
+  const imagePath = STATE_IMAGES[stateElement.id];
+  if (imagePath && stateImageEl) {
+    stateImageEl.src = imagePath;
+    stateImageEl.alt = `${stateName} landscape`;
+    stateImageEl.style.display = 'block';
+  } else if (stateImageEl) {
+    stateImageEl.style.display = 'none';
+  }
 
   // Inject favorites + notes UI
   updateModalContent(stateElement.id, stateName);
