@@ -234,6 +234,34 @@ svg#svg, svg#us-map, svg {
   animation: fadeIn 0.2s ease;
 }
 
+.modal-image-container {
+  position: relative;
+  width: calc(100% + 60px);
+  margin: -30px -30px 20px -30px;
+  border-radius: 12px 12px 0 0;
+  overflow: hidden;
+  aspect-ratio: 3 / 1;
+}
+
+.modal-state-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.modal-state-name-overlay {
+  position: absolute;
+  top: 15px;
+  left: 20px;
+  margin: 0;
+  font-size: 28px;
+  color: white;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7), 0 0 8px rgba(0, 0, 0, 0.5);
+  padding-right: 30px;
+  z-index: 10;
+}
+
 .visit-date-section {
   display: none;
   margin-top: 20px;
@@ -373,6 +401,18 @@ svg#svg, svg#us-map, svg {
   .modal-content h2 {
     font-size: 20px;
   }
+
+.modal-state-name-overlay {
+    font-size: 22px;
+    top: 10px;
+    left: 15px;
+  }
+
+  .modal-image-container {
+    width: calc(100% + 40px);
+    margin: -20px -20px 15px -20px;
+  }
+  
 }@keyframes fadeIn {
   from {
     opacity: 0;
@@ -520,6 +560,11 @@ svg#svg, svg#us-map, svg {
     color: #e5e5e5;
   }
 
+.modal-state-name-overlay {
+    color: white;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.9), 0 0 8px rgba(0, 0, 0, 0.7);
+  }
+  
   .state-label {
     background: #222;
     color: #eee;
