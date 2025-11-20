@@ -4,6 +4,7 @@ const RATINGS_KEY = 'stateRatings.v1';
 let lastClickedState = null; // {id, name}
 
 // === State images mapping ===
+// Use either a local filename (e.g., 'Oklahoma.jpg') or a full URL (e.g., 'https://example.com/image.jpg')
 const STATE_IMAGES = {
   'AL': 'Alabama.jpg',
   'AK': 'Alaska.jpg',
@@ -737,13 +738,35 @@ function openStateModal(stateElement) {
   lastClickedState = { id: stateElement.id, name: stateName }; //added for star system
   updateLastRatingDisplay(); //added for star system
 
+  // Set state image if available
   const imagePath = STATE_IMAGES[stateElement.id];
-  if (imagePath && stateImageEl) {
-    stateImageEl.src = imagePath;
-    stateImageEl.alt = `${stateName} landscape`;
-    stateImageEl.style.display = 'block';
-  } else if (stateImageEl) {
-    stateImageEl.style.display = 'none';
+  const imageContainer = modalContent.querySelector('.modal-image-container');
+  
+  if (stateImageEl) {
+    if (imagePath) {
+      // Show image container
+      if (imageContainer) {
+        imageContainer.style.display = 'block';
+      }
+      // Set and show image
+      stateImageEl.src = imagePath;
+      stateImageEl.alt = `${stateName} landscape`;
+      stateImageEl.style.display = 'block';
+      // Handle image load errors
+      stateImageEl.onerror = function() {
+        console.warn(`Failed to load image for ${stateElement.id}: ${imagePath}`);
+        this.style.display = 'none';
+      };
+      stateImageEl.onload = function() {
+        this.style.display = 'block';
+      };
+    } else {
+      // Hide image container if no image path
+      if (imageContainer) {
+        imageContainer.style.display = 'none';
+      }
+      stateImageEl.style.display = 'none';
+    }
   }
 
   // Inject favorites + notes UI
