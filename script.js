@@ -40,7 +40,7 @@ const STATE_IMAGES = {
   'NC': 'NorthCarolina.jpg',
   'ND': 'NorthDakota.jpg',
   'OH': 'Ohio.jpg',
-  'OK': 'Oklahoma.jpg',
+  'OK': 'https://media.istockphoto.com/id/639246126/photo/sunset-clouds-wichita-mtns-oklahoma.jpg?s=612x612&w=0&k=20&c=iIov8Wu9T_EsSf0K7hFSHgI8QPahArlybTeBXSc7GpM=',
   'OR': 'Oregon.jpg',
   'PA': 'Pennsylvania.jpg',
   'RI': 'RhodeIsland.jpg',
