@@ -719,33 +719,36 @@ function hydrateVisitDateInputs(stateId) {
   updateVisitDateDisplay();
 }
 
-function openStateModal(stateElement) {
-  const modal = document.getElementById('state-modal');
-  const modalContent = modal?.querySelector('.modal-content');
-  const stateNameEl = document.getElementById('modal-state-name');
-  const stateImageEl = document.getElementById('modal-state-image');
-  const toggleEl = document.getElementById('modal-visited-toggle');
-  
-  if (!modal || !modalContent || !stateNameEl || !toggleEl) return;
-  
-  const stateName = stateElement.getAttribute('data-state-name') || 
-                   stateElement.getAttribute('data-name') || 
-                   stateElement.id || 
-                   'Unknown State';
-  
-  stateNameEl.textContent = stateName;
-  lastClickedState = { id: stateElement.id, name: stateName }; //added for star system
-  updateLastRatingDisplay(); //added for star system
-
+// Set state image if available
   const imagePath = STATE_IMAGES[stateElement.id];
-  if (imagePath && stateImageEl) {
-    stateImageEl.src = imagePath;
-    stateImageEl.alt = `${stateName} landscape`;
-    stateImageEl.style.display = 'block';
-  } else if (stateImageEl) {
-    stateImageEl.style.display = 'none';
+  const imageContainer = modalContent.querySelector('.modal-image-container');
+  
+  if (stateImageEl) {
+    if (imagePath) {
+      // Show image container
+      if (imageContainer) {
+        imageContainer.style.display = 'block';
+      }
+      // Set and show image
+      stateImageEl.src = imagePath;
+      stateImageEl.alt = `${stateName} landscape`;
+      stateImageEl.style.display = 'block';
+      // Handle image load errors
+      stateImageEl.onerror = function() {
+        console.warn(`Failed to load image for ${stateElement.id}: ${imagePath}`);
+        this.style.display = 'none';
+      };
+      stateImageEl.onload = function() {
+        this.style.display = 'block';
+      };
+    } else {
+      // Hide image container if no image path
+      if (imageContainer) {
+        imageContainer.style.display = 'none';
+      }
+      stateImageEl.style.display = 'none';
+    }
   }
-
   // Inject favorites + notes UI
   updateModalContent(stateElement.id, stateName);
   
