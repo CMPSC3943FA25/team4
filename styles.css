@@ -571,7 +571,6 @@ svg#svg, svg#us-map, svg {
 
   .modal-state-name-overlay {
     color: #ffffff;
-    /* Same universal shadow for dark mode - works on any image */
     text-shadow: 
       -1px -1px 0 rgba(0, 0, 0, 0.8),
       1px -1px 0 rgba(0, 0, 0, 0.8),
