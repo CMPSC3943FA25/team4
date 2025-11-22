@@ -578,6 +578,11 @@ function addStarToState(stateId) {
       starX = lblX - 35;
       starY = lblY - 5;
       break;
+
+    case "LA":
+      starX = lblX - 35;
+      starY = lblY - 10;
+      break;
   }
 
   // Create star
