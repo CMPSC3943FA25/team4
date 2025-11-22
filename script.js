@@ -468,22 +468,130 @@ function updateStateNotesIndicator(stateId, hasNotes) {
 
 // Place a star near the top-right of a state path for favorites (for now needs to be moved)
 function addStarToState(stateId) {
-  const state = document.getElementById(stateId);
-  if (!state) return;
-  const svg = state.ownerSVGElement || state.closest('svg');
+  const svg = document.getElementById("svg");
   if (!svg) return;
 
+  // Remove existing star if it exists
   const existing = svg.querySelector('#star-' + stateId);
-  if (existing) return;
+  if (existing) existing.remove();
 
-  const bbox = state.getBBox();
-  const star = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-  star.setAttribute('id', 'star-' + stateId);
-  star.setAttribute('x', bbox.x + bbox.width - 10);
-  star.setAttribute('y', bbox.y + 15);
-  star.setAttribute('class', 'state-favorite-star');
-  star.setAttribute('font-size', '12');
-  star.textContent = '\u2605'; // ★
+  // Find the state abbreviation label
+  const label = svg.querySelector(`text.state-abbrev[data-state="${stateId}"]`);
+  if (!label) return;
+
+  // Get label coordinates
+  const lblX = parseFloat(label.getAttribute("x"));
+  const lblY = parseFloat(label.getAttribute("y"));
+
+  // Default star position (For all the states other than customs ones)
+  let starX = lblX - 14;
+  let starY = lblY - 10;
+
+  // --- Custom per-state adjustments ---
+  switch (stateId) {
+    case "ID":
+      starX = lblX - 15;
+      starY = lblY + 25;
+      break;
+
+    case "MN":
+      starX = lblX - 30;
+      starY = lblY - 10;
+      break;
+
+    case "MI":
+      starX = lblX + 10;
+      starY = lblY + 20;
+      break;
+
+    case "OK":
+      starX = lblX + 0;
+      starY = lblY - 10;
+      break;
+
+    case "NJ":
+      starX = lblX - 5;
+      starY = lblY - 15;
+      break;
+
+    case "MA":
+      starX = lblX - 20;
+      starY = lblY + 5;
+      break;
+
+    case "CT":
+      starX = lblX - 10;
+      starY = lblY - 5;
+      break;
+
+    case "RI":
+      starX = lblX + 10;
+      starY = lblY - 5;
+      break;
+
+    case "DE":
+      starX = lblX + 10;
+      starY = lblY - 10;
+      break;
+
+    case "VA":
+      starX = lblX + 0;
+      starY = lblY - 5;
+      break;
+
+    case "WV":
+      starX = lblX - 30;
+      starY = lblY + 5;
+      break;
+
+    case "KY":
+      starX = lblX - 0;
+      starY = lblY - 5;
+      break;
+
+    case "FL":
+      starX = lblX + 25;
+      starY = lblY - 14;
+      break;
+
+    case "HI":
+      starX = lblX + 140;
+      starY = lblY + 75;
+      break;
+
+    case "TN":
+      starX = lblX - 20;
+      starY = lblY + 10;
+      break;
+
+    case "NC":
+      starX = lblX - 20;
+      starY = lblY + 10;
+      break;
+
+    case "AK":
+      starX = lblX + 40;
+      starY = lblY - 20;
+      break;
+
+    case "CA":
+      starX = lblX - 35;
+      starY = lblY - 5;
+      break;
+  }
+
+  // Create star
+  const star = document.createElementNS("http://www.w3.org/2000/svg", "text");
+  star.id = "star-" + stateId;
+  star.setAttribute("x", starX);
+  star.setAttribute("y", starY);
+  star.setAttribute("font-size", "15");
+  star.setAttribute("fill", "gold");
+  star.setAttribute("stroke", "black");
+  star.setAttribute("stroke-width", "0.8");
+  star.setAttribute("class", "state-favorite-star");
+  star.textContent = "★";
+
   svg.appendChild(star);
 }
 
