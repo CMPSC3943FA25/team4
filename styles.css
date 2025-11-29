@@ -69,6 +69,23 @@ svg#svg, svg#us-map, svg {
   font-size: 1vw;
 }
 
+.download-image-btn {
+  margin-top: 12px;
+  width: 100%;
+  padding: 10px;
+  background: #10b981;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.download-image-btn:hover {
+  background: #059669;
+}
+
 /* Tooltip label */
 .state-label {
   position: absolute;
