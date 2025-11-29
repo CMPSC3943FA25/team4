@@ -1204,4 +1204,40 @@ function initModalListeners() {
 
 document.addEventListener('DOMContentLoaded', function() {
   initModalListeners();
+  initImageDownload();
 });
+
+function initImageDownload() {
+  const btn = document.getElementById('download-image-btn');
+  if (!btn) return;
+  
+  btn.onclick = function() {
+    const svg = document.getElementById('svg');
+    if (!svg) return;
+    
+    const svgData = new XMLSerializer().serializeToString(svg);
+    const svgBlob = new Blob([svgData], { type: 'image/svg+xml' });
+    const url = URL.createObjectURL(svgBlob);
+    
+    const img = new Image();
+    img.onload = function() {
+      const canvas = document.createElement('canvas');
+      canvas.width = img.width;
+      canvas.height = img.height;
+      const ctx = canvas.getContext('2d');
+      ctx.fillStyle = 'white';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.drawImage(img, 0, 0);
+      
+      canvas.toBlob(function(blob) {
+        const link = document.createElement('a');
+        link.download = 'us-travel-map.png';
+        link.href = URL.createObjectURL(blob);
+        link.click();
+        URL.revokeObjectURL(url);
+        URL.revokeObjectURL(link.href);
+      });
+    };
+    img.src = url;
+  };
+}
