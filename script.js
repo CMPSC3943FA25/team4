@@ -759,7 +759,7 @@ function handleResetClick() {
   updateProgress();
   updateFavoritesDisplay();
 
-  //reset rating
+  // Reset rating
   localStorage.removeItem(RATINGS_KEY);
   lastClickedState = null;
   updateLastRatingDisplay();
