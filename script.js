@@ -461,6 +461,7 @@ function getNoteForState(stateId) {
   return notes[stateId] || '';
 }
 
+// photos start
 function getPhotosFromStorage() {
   try {
     const raw = localStorage.getItem(PHOTOS_KEY);
@@ -566,6 +567,8 @@ function initPhotosSection(stateId) {
     this.value = '';
   };
 }
+
+// photos end
 
 function updateStateNotesIndicator(stateId, hasNotes) {
   const state = document.getElementById(stateId);
