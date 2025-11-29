@@ -411,6 +411,7 @@ function updateVisitDateDisplay() {
 // === Favorites and Notes storage ===
 const FAVORITES_KEY = 'favoriteStates.v1';
 const NOTES_KEY = 'stateNotes.v1';
+const PHOTOS_KEY = 'statePhotos.v1';
 
 function getFavoritesFromStorage() {
   try {
@@ -458,6 +459,112 @@ function saveNoteForState(stateId, note) {
 function getNoteForState(stateId) {
   const notes = getNotesFromStorage();
   return notes[stateId] || '';
+}
+
+function getPhotosFromStorage() {
+  try {
+    const raw = localStorage.getItem(PHOTOS_KEY);
+    return raw ? JSON.parse(raw) : {};
+  } catch (e) {
+    return {};
+  }
+}
+
+function savePhotosToStorage(photos) {
+  try {
+    localStorage.setItem(PHOTOS_KEY, JSON.stringify(photos));
+    return true;
+  } catch (e) {
+    console.error('Failed to save photos:', e);
+    return false;
+  }
+}
+
+function getPhotosForState(stateId) {
+  const photos = getPhotosFromStorage();
+  return photos[stateId] || [];
+}
+
+function savePhotosForState(stateId, photoArray) {
+  const photos = getPhotosFromStorage();
+  if (photoArray && photoArray.length > 0) {
+    photos[stateId] = photoArray;
+  } else {
+    delete photos[stateId];
+  }
+  return savePhotosToStorage(photos);
+}
+
+function addPhotoToState(stateId, photoDataUrl) {
+  const currentPhotos = getPhotosForState(stateId);
+  if (currentPhotos.length >= 3) {
+    alert('Maximum of 3 photos per state. Please remove a photo first.');
+    return false;
+  }
+  currentPhotos.push(photoDataUrl);
+  return savePhotosForState(stateId, currentPhotos);
+}
+
+function removePhotoFromState(stateId, photoIndex) {
+  const currentPhotos = getPhotosForState(stateId);
+  currentPhotos.splice(photoIndex, 1);
+  return savePhotosForState(stateId, currentPhotos);
+}
+
+function initPhotosSection(stateId) {
+  const cameraBtn = document.getElementById('camera-btn');
+  const gallery = document.getElementById('photo-gallery');
+  const uploadBtn = document.getElementById('upload-btn');
+  const photoUpload = document.getElementById('photo-upload');
+  const galleryGrid = document.getElementById('gallery-grid');
+
+  function renderGallery() {
+    const photos = getPhotosForState(stateId);
+    galleryGrid.innerHTML = '';
+    
+    photos.forEach((photoDataUrl, index) => {
+      const item = document.createElement('div');
+      item.className = 'gallery-item';
+      item.innerHTML = `<img src="${photoDataUrl}"><button class="remove-photo-btn" data-index="${index}">&times;</button>`;
+      galleryGrid.appendChild(item);
+    });
+
+    galleryGrid.querySelectorAll('.remove-photo-btn').forEach(btn => {
+      btn.onclick = () => {
+        if (confirm('Remove this photo?')) {
+          removePhotoFromState(stateId, parseInt(btn.dataset.index));
+          renderGallery();
+        }
+      };
+    });
+  }
+
+  cameraBtn.onclick = () => {
+    renderGallery();
+    gallery.classList.toggle('hidden');
+  };
+
+  uploadBtn.onclick = () => photoUpload.click();
+
+  photoUpload.onchange = function(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    
+    const photos = getPhotosForState(stateId);
+    if (photos.length >= 3) {
+      alert('Maximum 3 photos per state');
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      if (addPhotoToState(stateId, event.target.result)) {
+        renderGallery();
+      }
+    };
+    reader.readAsDataURL(file);
+    this.value = '';
+  };
 }
 
 function updateStateNotesIndicator(stateId, hasNotes) {
@@ -621,6 +728,7 @@ function handleResetClick() {
     localStorage.removeItem(VISIT_DATES_KEY);
     localStorage.removeItem(FAVORITES_KEY);
     localStorage.removeItem(NOTES_KEY);
+    localStorage.removeItem(PHOTOS_KEY);
     localStorage.removeItem('mapDots');
   } catch (e) {}
 
@@ -652,6 +760,9 @@ function handleResetClick() {
   localStorage.removeItem(RATINGS_KEY);
   lastClickedState = null;
   updateLastRatingDisplay();
+
+  // Reset photos
+  localStorage.removeItem(PHOTOS_KEY);
 }
 
 function addFavoritesCounter() {
@@ -821,6 +932,22 @@ function updateModalContent(stateId, stateName) {
       }, 1500);
     }
   };
+
+  let photosSection = modal.querySelector('.photos-section');
+  if (!photosSection) {
+    photosSection = document.createElement('div');
+    photosSection.className = 'photos-section';
+    photosSection.innerHTML = ''
+      + '<button class="camera-btn" id="camera-btn" type="button">📷 Photos</button>'
+      + '<div class="photo-gallery hidden" id="photo-gallery">'
+      + '  <div class="gallery-grid" id="gallery-grid"></div>'
+      + '  <input type="file" id="photo-upload" accept="image/*" style="display: none;">'
+      + '  <button class="upload-btn" id="upload-btn" type="button">+ Add Photo</button>'
+      + '</div>';
+    extraContainer.appendChild(photosSection);
+  }
+
+  initPhotosSection(stateId);
 }
 
 function hydrateVisitDateInputs(stateId) {
